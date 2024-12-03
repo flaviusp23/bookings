@@ -1,6 +1,7 @@
 package render
 
 import (
+	"bookings/pkg/config"
 	"bytes"
 	"html/template"
 	"log"
@@ -8,31 +9,40 @@ import (
 	"path/filepath"
 )
 
+var app *config.AppConfig
+
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
 // RenderTemplate renders a template
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	//create template cache
-	tc, err := createTemplateCache()
-	if err != nil {
-		log.Fatal(err)
+	var tc map[string]*template.Template
+	if app.UseCache {
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
 	}
-	//get requested template from cache
+	// get the template cache from the app config
+	// get requested template from cache
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("could not get template from templatecache")
 	}
 	buf := new(bytes.Buffer)
-	err = t.Execute(buf, nil)
+	err := t.Execute(buf, nil) // Declare err here
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	//render the template
+	// render the template
 	_, err = buf.WriteTo(w)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func createTemplateCache() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 	//get all the files names *.page.tmpl from ./templates
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
