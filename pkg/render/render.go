@@ -2,6 +2,7 @@ package render
 
 import (
 	"bookings/pkg/config"
+	"bookings/pkg/models"
 	"bytes"
 	"html/template"
 	"log"
@@ -15,8 +16,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
 // RenderTemplate renders a template
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 	if app.UseCache {
 		tc = app.TemplateCache
@@ -30,7 +35,8 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 		log.Fatal("could not get template from templatecache")
 	}
 	buf := new(bytes.Buffer)
-	err := t.Execute(buf, nil) // Declare err here
+	td = AddDefaultData(td)
+	err := t.Execute(buf, td) // Declare err here
 	if err != nil {
 		log.Println(err)
 		return
