@@ -38,7 +38,7 @@ func main() {
 	app.TemplateCache = tc
 	app.UseCache = false
 	repo := handlers.NewRepo(&app)
-	handlers.NewHandler(repo)
+	handlers.NewHandlers(repo)
 	render.NewTemplates(&app)
 
 	fmt.Printf("Staring application on port %s", portNumber)
