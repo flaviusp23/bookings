@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/flaviusp23/bookings/pkg/config"
-	"github.com/flaviusp23/bookings/pkg/handlers"
-	"github.com/flaviusp23/bookings/pkg/render"
+	"github.com/flaviusp23/bookings/internal/config"
+	"github.com/flaviusp23/bookings/internal/handlers"
+	"github.com/flaviusp23/bookings/internal/render"
 
 	"github.com/alexedwards/scs/v2"
 )

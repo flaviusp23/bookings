@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/flaviusp23/bookings/pkg/config"
-	"github.com/flaviusp23/bookings/pkg/handlers"
+	"github.com/flaviusp23/bookings/internal/config"
+	"github.com/flaviusp23/bookings/internal/handlers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
