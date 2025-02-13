@@ -1,6 +1,6 @@
 package models
 
-import "github.com/flaviusp23/bookings/internal/forms.go"
+import "github.com/flaviusp23/bookings/internal/forms"
 
 // holds data send from handlers to templates
 type TemplateData struct {

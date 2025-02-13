@@ -1,0 +1,16 @@
+mode: set
+github.com/flaviusp23/bookings/internal/forms/errors.go:5.44,7.2 1 1
+github.com/flaviusp23/bookings/internal/forms/errors.go:9.42,11.18 2 1
+github.com/flaviusp23/bookings/internal/forms/errors.go:11.18,13.3 1 1
+github.com/flaviusp23/bookings/internal/forms/errors.go:14.2,14.14 1 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:16.33,21.2 1 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:23.43,24.31 1 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:24.31,26.37 2 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:26.37,28.4 1 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:33.39,36.2 2 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:38.29,40.2 1 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:42.57,44.21 2 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:44.21,47.3 2 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:48.2,48.13 1 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:51.38,52.40 1 1
+github.com/flaviusp23/bookings/internal/forms/forms.go:52.40,54.3 1 1

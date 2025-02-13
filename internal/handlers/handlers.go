@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/flaviusp23/bookings/internal/config"
-	"github.com/flaviusp23/bookings/internal/forms.go"
+	"github.com/flaviusp23/bookings/internal/forms"
 	"github.com/flaviusp23/bookings/internal/models"
 	"github.com/flaviusp23/bookings/internal/render"
 )
