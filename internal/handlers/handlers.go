@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -152,8 +151,41 @@ func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 	start := r.Form.Get("start")
 	end := r.Form.Get("end")
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, start)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	endDate, err := time.Parse(layout, end)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	rooms, err := m.DB.SearchAvailabilityForAllRooms(startDate, endDate)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	for _, i := range rooms {
+		m.App.InfoLog.Println("ROOM:", i.ID, i.RoomName)
+	}
+	if len(rooms) == 0 {
+		m.App.Session.Put(r.Context(), "error", "No availability")
+		http.Redirect(w, r, "/search-availability", http.StatusSeeOther)
+	}
+	data := make(map[string]interface{})
+	data["rooms"] = rooms
 
-	w.Write([]byte(fmt.Sprintf("start date is %s and end is %s", start, end)))
+	//nu putem stoca time.time in session asa ca facem o fenta si populam reservation din session doar cu startdate end date
+	res := models.Reservation{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+	m.App.Session.Put(r.Context(), "reservation", res)
+	render.Template(w, r, "choose-room.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
 
 type jsonResponse struct {
