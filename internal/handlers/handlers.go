@@ -164,30 +164,34 @@ func (m *Repository) Availability(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
 	start := r.Form.Get("start")
 	end := r.Form.Get("end")
 	layout := "2006-01-02"
 	startDate, err := time.Parse(layout, start)
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't parse start date!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	endDate, err := time.Parse(layout, end)
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't parse start date!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	rooms, err := m.DB.SearchAvailabilityForAllRooms(startDate, endDate)
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "can't get availability for rooms")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	// for _, i := range rooms {
-	// 	m.App.InfoLog.Println("ROOM:", i.ID, i.RoomName)
-	// }
+
 	if len(rooms) == 0 {
+		// no availability
 		m.App.Session.Put(r.Context(), "error", "No availability")
 		http.Redirect(w, r, "/search-availability", http.StatusSeeOther)
+		return
 	}
 	data := make(map[string]interface{})
 	data["rooms"] = rooms
