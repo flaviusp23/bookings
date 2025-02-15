@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -91,19 +90,25 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
-		helpers.ServerError(w, errors.New("can't get from session"))
-		return
+		m.App.Session.Put(r.Context(), "error", "Can't get from session")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	err := r.ParseForm()
 	if err != nil {
 		m.App.Session.Put(r.Context(), "error", "Can't parse form!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
-
+	room, err := m.DB.GetRoomByID(reservation.RoomID) //speram sa fie populat cu Room.ID si nu RoomID
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "can't find room!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 	reservation.FirstName = r.Form.Get("first_name")
 	reservation.LastName = r.Form.Get("last_name")
 	reservation.Email = r.Form.Get("email")
 	reservation.Phone = r.Form.Get("phone")
+	reservation.Room = room
 
 	form := forms.New(r.PostForm)
 
@@ -124,8 +129,8 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	var newReservationID int
 	newReservationID, err = m.DB.InsertReservation(reservation)
 	if err != nil {
-		helpers.ServerError(w, err)
-		return
+		m.App.Session.Put(r.Context(), "error", "database-insert-fails-reservation")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	restriction := models.RoomRestriction{
 		StartDate:     reservation.StartDate,
@@ -136,8 +141,8 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	}
 	err = m.DB.InsertRoomRestriction(restriction)
 	if err != nil {
-		helpers.ServerError(w, err)
-		return
+		m.App.Session.Put(r.Context(), "error", "database-insert-fails-restriction")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	m.App.Session.Put(r.Context(), "reservation", reservation)
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)

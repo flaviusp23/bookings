@@ -10,6 +10,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/flaviusp23/bookings/internal/driver"
 	"github.com/flaviusp23/bookings/internal/models"
@@ -83,9 +84,9 @@ var reservationTests = []struct {
 	{
 		name: "non-existent-room",
 		reservation: models.Reservation{
-			RoomID: 100,
+			RoomID: 10000,
 			Room: models.Room{
-				ID:       100,
+				ID:       10000,
 				RoomName: "General's Quarters",
 			},
 		},
@@ -131,10 +132,15 @@ func TestReservation(t *testing.T) {
 		}
 	}
 }
+func Time(date string) time.Time {
+	t, _ := time.Parse("2006-01-02", date) // Standard Go date format
+	return t
+}
 
 // postReservationTests is the test data for the PostReservation handler test
 var postReservationTests = []struct {
 	name                 string
+	reservation          models.Reservation
 	postedData           url.Values
 	expectedResponseCode int
 	expectedLocation     string
@@ -142,14 +148,20 @@ var postReservationTests = []struct {
 }{
 	{
 		name: "valid-data",
+		reservation: models.Reservation{
+			StartDate: Time("2050-01-01"),
+			EndDate:   Time("2050-01-02"),
+			RoomID:    1,
+			Room: models.Room{
+				ID:       1,
+				RoomName: "General's Quarters",
+			},
+		},
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_id":    {"1"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -157,51 +169,49 @@ var postReservationTests = []struct {
 	},
 	{
 		name:                 "missing-post-body",
+		reservation:          models.Reservation{},
 		postedData:           nil,
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
 		expectedLocation:     "/",
 	},
 	{
-		name: "invalid-start-date",
+		name:        "invalid-session",
+		reservation: models.Reservation{}, // Simulating an empty or missing session
 		postedData: url.Values{
-			"start_date": {"invalid"},
-			"end_date":   {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_id":    {"1"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
 		expectedLocation:     "/",
 	},
 	{
-		name: "invalid-end-date",
-		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"end"},
-			"first_name": {"John"},
-			"last_name":  {"Smith"},
-			"email":      {"john@smith.com"},
-			"phone":      {"555-555-5555"},
-			"room_id":    {"1"},
-		},
+		name:                 "missing-post-body",
+		reservation:          models.Reservation{},
+		postedData:           nil,
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
 		expectedLocation:     "/",
 	},
 	{
 		name: "invalid-room-id",
+		reservation: models.Reservation{
+			StartDate: Time("2050-01-01"),
+			EndDate:   Time("2050-01-02"),
+			RoomID:    9999, // Invalid room ID
+			Room: models.Room{
+				ID:       9999,
+				RoomName: "Unknown Room",
+			},
+		},
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_id":    {"invalid"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -209,14 +219,20 @@ var postReservationTests = []struct {
 	},
 	{
 		name: "invalid-data",
+		reservation: models.Reservation{
+			StartDate: Time("2050-01-01"),
+			EndDate:   Time("2050-01-02"),
+			RoomID:    1,
+			Room: models.Room{
+				ID:       1,
+				RoomName: "General's Quarters",
+			},
+		},
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
-			"first_name": {"J"},
+			"first_name": {"J"}, // Too short
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_id":    {"1"},
 		},
 		expectedResponseCode: http.StatusOK,
 		expectedHTML:         `action="/make-reservation"`,
@@ -224,29 +240,41 @@ var postReservationTests = []struct {
 	},
 	{
 		name: "database-insert-fails-reservation",
+		reservation: models.Reservation{
+			StartDate: Time("2050-01-01"),
+			EndDate:   Time("2050-01-02"),
+			RoomID:    1000,
+			Room: models.Room{
+				ID:       1000,
+				RoomName: "King's Suite",
+			},
+		},
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_id":    {"2"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
 		expectedLocation:     "/",
 	},
 	{
-		name: "database-insert-fails-restriction",
+		name: "database-insert-restrictions",
+		reservation: models.Reservation{
+			StartDate: Time("2050-01-01"),
+			EndDate:   Time("2050-01-02"),
+			RoomID:    1000,
+			Room: models.Room{
+				ID:       1000,
+				RoomName: "King's Suite",
+			},
+		},
 		postedData: url.Values{
-			"start_date": {"2050-01-01"},
-			"end_date":   {"2050-01-02"},
 			"first_name": {"John"},
 			"last_name":  {"Smith"},
 			"email":      {"john@smith.com"},
 			"phone":      {"555-555-5555"},
-			"room_id":    {"1000"},
 		},
 		expectedResponseCode: http.StatusSeeOther,
 		expectedHTML:         "",
@@ -254,48 +282,49 @@ var postReservationTests = []struct {
 	},
 }
 
-// // TestPostReservation tests the PostReservation handler
-// func TestPostReservation(t *testing.T) {
-// 	for _, e := range postReservationTests {
-// 		var req *http.Request
-// 		if e.postedData != nil {
-// 			req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(e.postedData.Encode()))
-// 		} else {
-// 			req, _ = http.NewRequest("POST", "/make-reservation", nil)
+// TestPostReservation tests the PostReservation handler
+func TestPostReservation(t *testing.T) {
+	for _, e := range postReservationTests {
+		var req *http.Request
+		if e.postedData != nil {
+			req, _ = http.NewRequest("POST", "/make-reservation", strings.NewReader(e.postedData.Encode()))
+		} else {
+			req, _ = http.NewRequest("POST", "/make-reservation", nil)
 
-// 		}
-// 		ctx := getCtx(req)
-// 		req = req.WithContext(ctx)
-// 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		}
+		ctx := getCtx(req)
+		req = req.WithContext(ctx)
+		rr := httptest.NewRecorder()
+		if e.reservation.RoomID > 0 {
+			session.Put(ctx, "reservation", e.reservation)
+		}
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-// 		rr := httptest.NewRecorder()
+		handler := http.HandlerFunc(Repo.PostReservation)
 
-// 		handler := http.HandlerFunc(Repo.PostReservation)
+		handler.ServeHTTP(rr, req)
+		if rr.Code != e.expectedResponseCode {
+			t.Errorf("%s returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedResponseCode)
+		}
 
-// 		handler.ServeHTTP(rr, req)
+		if e.expectedLocation != "" {
+			// get the URL from test
+			actualLoc, _ := rr.Result().Location()
+			if actualLoc.String() != e.expectedLocation {
+				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
+			}
+		}
 
-// 		if rr.Code != e.expectedResponseCode {
-// 			t.Errorf("%s returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedResponseCode)
-// 		}
+		if e.expectedHTML != "" {
+			// read the response body into a string
+			html := rr.Body.String()
+			if !strings.Contains(html, e.expectedHTML) {
+				t.Errorf("failed %s: expected to find %s but did not", e.name, e.expectedHTML)
+			}
+		}
 
-// 		if e.expectedLocation != "" {
-// 			// get the URL from test
-// 			actualLoc, _ := rr.Result().Location()
-// 			if actualLoc.String() != e.expectedLocation {
-// 				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
-// 			}
-// 		}
-
-// 		if e.expectedHTML != "" {
-// 			// read the response body into a string
-// 			html := rr.Body.String()
-// 			if !strings.Contains(html, e.expectedHTML) {
-// 				t.Errorf("failed %s: expected to find %s but did not", e.name, e.expectedHTML)
-// 			}
-// 		}
-
-// 	}
-// }
+	}
+}
 
 func TestNewRepo(t *testing.T) {
 	var db driver.DB
