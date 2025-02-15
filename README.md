@@ -27,3 +27,5 @@ http.Error(w, "Room is not available for the selected dates", http.StatusConflic
 return
 }
 de gandit
+
+sa repar testele cel putin de la handlers sa verifice toate testcase-urile deja scrise
