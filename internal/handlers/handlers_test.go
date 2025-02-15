@@ -79,6 +79,7 @@ func TestRepository_Reservation(t *testing.T) {
 		t.Errorf("Reservation handler returned wrong response code: got %d, wanted %d", rr.Code, http.StatusTemporaryRedirect)
 	}
 	//test with non existent room
+
 	reservation.RoomID = 100
 	session.Put(ctx, "reservation", reservation)
 	handler.ServeHTTP(rr, req)
