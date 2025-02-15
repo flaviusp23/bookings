@@ -16,11 +16,6 @@ import (
 	"github.com/flaviusp23/bookings/internal/models"
 )
 
-type postData struct {
-	key   string
-	value string
-}
-
 var theTests = []struct {
 	name               string
 	url                string
@@ -417,7 +412,7 @@ func TestAvailabilityJSON(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		var j jsonResponse
-		err := json.Unmarshal([]byte(rr.Body.String()), &j)
+		err := json.Unmarshal([]byte(rr.Body.Bytes()), &j)
 		if err != nil {
 			t.Error("failed to parse json!")
 		}

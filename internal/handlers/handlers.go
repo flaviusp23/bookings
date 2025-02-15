@@ -350,7 +350,7 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	available, err := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
+	available, _ := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
 	if !available {
 		m.App.Session.Put(r.Context(), "error", "attentione, user modified ilegally the dates after he fixed them")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
