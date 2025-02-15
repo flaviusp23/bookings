@@ -538,33 +538,33 @@ var reservationSummaryTests = []struct {
 }
 
 // TestReservationSummary tests the ReservationSummaryHandler
-// func TestReservationSummary(t *testing.T) {
-// 	for _, e := range reservationSummaryTests {
-// 		req, _ := http.NewRequest("GET", e.url, nil)
-// 		ctx := getCtx(req)
-// 		req = req.WithContext(ctx)
+func TestReservationSummary(t *testing.T) {
+	for _, e := range reservationSummaryTests {
+		req, _ := http.NewRequest("GET", e.url, nil)
+		ctx := getCtx(req)
+		req = req.WithContext(ctx)
 
-// 		rr := httptest.NewRecorder()
-// 		if e.reservation.RoomID > 0 {
-// 			session.Put(ctx, "reservation", e.reservation)
-// 		}
+		rr := httptest.NewRecorder()
+		if e.reservation.RoomID > 0 {
+			session.Put(ctx, "reservation", e.reservation)
+		}
 
-// 		handler := http.HandlerFunc(Repo.ReservationSummary)
+		handler := http.HandlerFunc(Repo.ReservationSummary)
 
-// 		handler.ServeHTTP(rr, req)
+		handler.ServeHTTP(rr, req)
 
-// 		if rr.Code != e.expectedStatusCode {
-// 			t.Errorf("%s returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedStatusCode)
-// 		}
+		if rr.Code != e.expectedStatusCode {
+			t.Errorf("%s returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedStatusCode)
+		}
 
-// 		if e.expectedLocation != "" {
-// 			actualLoc, _ := rr.Result().Location()
-// 			if actualLoc.String() != e.expectedLocation {
-// 				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
-// 			}
-// 		}
-// 	}
-// }
+		if e.expectedLocation != "" {
+			actualLoc, _ := rr.Result().Location()
+			if actualLoc.String() != e.expectedLocation {
+				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
+			}
+		}
+	}
+}
 
 // chooseRoomTests is the data for ChooseRoom handler tests, /choose-room/{id}
 var chooseRoomTests = []struct {
@@ -604,34 +604,34 @@ var chooseRoomTests = []struct {
 }
 
 // TestChooseRoom tests the ChooseRoom handler
-// func TestChooseRoom(t *testing.T) {
-// 	for _, e := range chooseRoomTests {
-// 		req, _ := http.NewRequest("GET", e.url, nil)
-// 		ctx := getCtx(req)
-// 		req = req.WithContext(ctx)
-// 		// set the RequestURI on the request so that we can grab the ID from the URL
-// 		req.RequestURI = e.url
+func TestChooseRoom(t *testing.T) {
+	for _, e := range chooseRoomTests {
+		req, _ := http.NewRequest("GET", e.url, nil)
+		ctx := getCtx(req)
+		req = req.WithContext(ctx)
+		// set the RequestURI on the request so that we can grab the ID from the URL
+		req.RequestURI = e.url
 
-// 		rr := httptest.NewRecorder()
-// 		if e.reservation.RoomID > 0 {
-// 			session.Put(ctx, "reservation", e.reservation)
-// 		}
+		rr := httptest.NewRecorder()
+		if e.reservation.RoomID > 0 {
+			session.Put(ctx, "reservation", e.reservation)
+		}
 
-// 		handler := http.HandlerFunc(Repo.ChooseRoom)
-// 		handler.ServeHTTP(rr, req)
+		handler := http.HandlerFunc(Repo.ChooseRoom)
+		handler.ServeHTTP(rr, req)
 
-// 		if rr.Code != e.expectedStatusCode {
-// 			t.Errorf("%s returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedStatusCode)
-// 		}
+		if rr.Code != e.expectedStatusCode {
+			t.Errorf("%s returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedStatusCode)
+		}
 
-// 		if e.expectedLocation != "" {
-// 			actualLoc, _ := rr.Result().Location()
-// 			if actualLoc.String() != e.expectedLocation {
-// 				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
-// 			}
-// 		}
-// 	}
-// }
+		if e.expectedLocation != "" {
+			actualLoc, _ := rr.Result().Location()
+			if actualLoc.String() != e.expectedLocation {
+				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
+			}
+		}
+	}
+}
 
 // bookRoomTests is the data for the BookRoom handler tests
 var bookRoomTests = []struct {
@@ -649,35 +649,50 @@ var bookRoomTests = []struct {
 		url:                "/book-room?s=2040-01-01&e=2040-01-02&id=4",
 		expectedStatusCode: http.StatusSeeOther,
 	},
+	{
+		name:               "invalid room id",
+		url:                "/book-room?s=2040-01-01&e=2040-01-02&id=44444",
+		expectedStatusCode: http.StatusSeeOther,
+	},
+	{
+		name:               "invalid start-date",
+		url:                "/book-room?s=&e=2060-01-02&id=4",
+		expectedStatusCode: http.StatusSeeOther,
+	},
+	{
+		name:               "invalid end-date",
+		url:                "/book-room?s=2060-01-01&e=&id=4",
+		expectedStatusCode: http.StatusSeeOther,
+	},
 }
 
 // TestBookRoom tests the BookRoom handler
-// func TestBookRoom(t *testing.T) {
-// 	reservation := models.Reservation{
-// 		RoomID: 1,
-// 		Room: models.Room{
-// 			ID:       1,
-// 			RoomName: "General's Quarters",
-// 		},
-// 	}
+func TestBookRoom(t *testing.T) {
+	reservation := models.Reservation{
+		RoomID: 1,
+		Room: models.Room{
+			ID:       1,
+			RoomName: "General's Quarters",
+		},
+	}
 
-// 	for _, e := range bookRoomTests {
-// 		req, _ := http.NewRequest("GET", e.url, nil)
-// 		ctx := getCtx(req)
-// 		req = req.WithContext(ctx)
+	for _, e := range bookRoomTests {
+		req, _ := http.NewRequest("GET", e.url, nil)
+		ctx := getCtx(req)
+		req = req.WithContext(ctx)
 
-// 		rr := httptest.NewRecorder()
-// 		session.Put(ctx, "reservation", reservation)
+		rr := httptest.NewRecorder()
+		session.Put(ctx, "reservation", reservation)
 
-// 		handler := http.HandlerFunc(Repo.BookRoom)
+		handler := http.HandlerFunc(Repo.BookRoom)
 
-// 		handler.ServeHTTP(rr, req)
+		handler.ServeHTTP(rr, req)
 
-// 		if rr.Code != http.StatusSeeOther {
-// 			t.Errorf("%s failed: returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedStatusCode)
-// 		}
-// 	}
-// }
+		if rr.Code != http.StatusSeeOther {
+			t.Errorf("%s failed: returned wrong response code: got %d, wanted %d", e.name, rr.Code, e.expectedStatusCode)
+		}
+	}
+}
 
 // gets the context
 func getCtx(req *http.Request) context.Context {
