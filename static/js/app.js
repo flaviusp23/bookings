@@ -62,28 +62,20 @@ function Prompt() {
           c.didOpen();
         }
       },
-      preConfirm: () => {
-        return [
-          document.getElementById("start").value,
-          document.getElementById("end").value,
-        ];
-      },
     });
+
+    // Handle the result
     if (result) {
-      if (result.dismiss !== Swal.DismissReason.cancel) {
-        if (result.value !== "") {
-          if (c.callback !== undefined) {
-            c.callback(result);
-          }
-        } else {
-          c.callback(false);
-        }
-      } else {
+      if (c.callback !== undefined) {
+        c.callback(result);
+      }
+    } else {
+      // Handle the case where the modal is dismissed
+      if (c.callback !== undefined) {
         c.callback(false);
       }
     }
   }
-
   return {
     toast: toast,
     success: success,

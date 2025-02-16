@@ -14,7 +14,7 @@
             <strong>Room:</strong> {{$res.Room.RoomName}}<br>
         </p>
 
-         <form action="/admin/reservations/{{$src}}/{{$res.ID}}" method="post" class="" novalidate>
+        <form action="/admin/reservations/{{$src}}/{{$res.ID}}" method="post" class="" novalidate>
             <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
             <input type="hidden" name="year" value="{{index .StringMap "year"}}">
             <input type="hidden" name="month" value="{{index .StringMap "month"}}">
@@ -84,19 +84,17 @@
 {{define "js"}}
     {{$src := index .StringMap "src"}}
     <script>
-        function processRes(id) {
+       function processRes(id) {
             attention.custom({
-                icon: 'warning',
-                msg: 'Are you sure?',
-                callback: function (result) {
-                    if (result !== false) {
-                        window.location.href = "/admin/process-reservation/{{$src}}/"
-                            + id
-                            + "/do?y={{index .StringMap "year"}}&m={{index .StringMap "month"}}";
-                    }
+            icon: 'warning',
+            msg: 'Are you sure?',
+            callback: function (result) {
+                if (result !== false) {
+                    window.location.href = "/admin/process-reservation/{{$src}}/" + id + "/do";
                 }
-            })
-        }
+            }
+        });
+    }
 
         function deleteRes(id) {
             attention.custom({
@@ -104,9 +102,7 @@
                 msg: 'Are you sure?',
                 callback: function (result) {
                     if (result !== false) {
-                        window.location.href = "/admin/delete-reservation/{{$src}}/"
-                            + id
-                            + "/do?y={{index .StringMap "year"}}&m={{index .StringMap "month"}}";
+                        window.location.href = "/admin/delete-reservation/{{$src}}/"+ id + "/do";
                     }
                 }
             })
