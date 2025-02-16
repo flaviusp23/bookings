@@ -7,6 +7,7 @@
 
 soda migration sql ceva pompos
 unit , integrity testing with a test database repository
+used channels to send emails(posibil using goroutines and channels) -- cred ca ceea ce am facut noi e un local mail server
 
 problemele:
 cand fac o rezervare pe make-reservation si e ceva gresit nu se salveaza in session startdate si enddate ca la firstname sau email etc
