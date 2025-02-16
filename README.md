@@ -5,6 +5,8 @@
 - Uses [alex edwards scs session management](github.com/alexedwards/scs)
 - Uses [nosurf](github.com/justinas/nosurf)
 
+termen limita de facut pana pe 20 inclusiv pana sunt multumit
+
 soda migration sql ceva pompos
 unit , integrity testing with a test database repository
 used channels to send emails(posibil using goroutines and channels) -- cred ca ceea ce am facut noi e un local mail server

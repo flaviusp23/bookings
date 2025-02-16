@@ -33,7 +33,7 @@ func main() {
 	}
 	defer db.SQL.Close()
 	defer close(app.MailChan)
-	fmt.Printf("Starting mail listener...")
+	fmt.Printf("Starting mail listener...\n")
 	listenForMail()
 
 	fmt.Printf("Starting application on port %s", portNumber)
