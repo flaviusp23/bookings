@@ -12,6 +12,7 @@ import (
 	"github.com/flaviusp23/bookings/internal/config"
 	"github.com/flaviusp23/bookings/internal/driver"
 	"github.com/flaviusp23/bookings/internal/forms"
+	"github.com/flaviusp23/bookings/internal/helpers"
 	"github.com/flaviusp23/bookings/internal/models"
 	"github.com/flaviusp23/bookings/internal/render"
 	"github.com/flaviusp23/bookings/internal/repository"
@@ -492,17 +493,17 @@ func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
 
 // AdminAllReservations shows all reservations inu admin tool
 func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
-	// reservations, err := m.DB.AllReservations()
-	// if err != nil {
-	// 	helpers.ServerError(w, err)
-	// 	return
-	// }
+	reservations, err := m.DB.AllReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
 
-	// data := make(map[string]interface{})
-	// data["reservations"] = reservations
+	data := make(map[string]interface{})
+	data["reservations"] = reservations
 
 	render.Template(w, r, "admin-all-reservations.page.tmpl", &models.TemplateData{
-		Data: nil,
+		Data: data,
 	})
 }
 
