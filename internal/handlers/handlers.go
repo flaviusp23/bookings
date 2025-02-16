@@ -435,9 +435,14 @@ func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	id, _, err := m.DB.Authenticate(email, password)
 	if err != nil {
-		log.Println(err)
 		m.App.Session.Put(r.Context(), "error", "Invalid login credentials")
-		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		stringMap := make(map[string]string)
+		stringMap["email"] = email
+		render.Template(w, r, "login.page.tmpl", &models.TemplateData{
+			Form:      form,
+			StringMap: stringMap,
+		})
+		return
 	}
 	m.App.Session.Put(r.Context(), "user_id", id)
 	m.App.Session.Put(r.Context(), "flash", "Logged in successfully!")

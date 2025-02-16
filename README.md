@@ -7,6 +7,7 @@
 
 termen limita de facut pana pe 20 inclusiv pana sunt multumit
 
+password si alte datele stocate in Server Side Session
 soda migration sql ceva pompos
 unit , integrity testing with a test database repository
 used channels to send emails(posibil using goroutines and channels) -- cred ca ceea ce am facut noi e un local mail server
