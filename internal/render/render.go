@@ -40,7 +40,7 @@ func Iterate(count int) []int {
 
 // HumanDate returns time in YYYY-MM-DD format
 func HumanDate(t time.Time) string {
-	return t.Format("2006 January 02")
+	return t.Format("02 January, 2006")
 }
 
 func FormatDate(t time.Time, f string) string {

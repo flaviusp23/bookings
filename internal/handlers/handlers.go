@@ -509,16 +509,16 @@ func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request
 
 // AdminNewReservations shows all new reservations in admin tool
 func (m *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
-	// reservations, err := m.DB.AllNewReservations()
-	// if err != nil {
-	// 	helpers.ServerError(w, err)
-	// 	return
-	// }
+	reservations, err := m.DB.AllNewReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
 
-	// data := make(map[string]interface{})
-	// data["reservations"] = reservations
+	data := make(map[string]interface{})
+	data["reservations"] = reservations
 	render.Template(w, r, "admin-new-reservations.page.tmpl", &models.TemplateData{
-		Data: nil,
+		Data: data,
 	})
 }
 
