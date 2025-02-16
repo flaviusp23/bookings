@@ -455,3 +455,7 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
+
+func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "admindashboard.page.tmpl", &models.TemplateData{})
+}
