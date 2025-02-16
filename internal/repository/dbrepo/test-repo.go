@@ -104,3 +104,20 @@ func (m *testDBRepo) GetRoomByID(id int) (models.Room, error) {
 	room.ID = id
 	return room, nil
 }
+
+func (m *testDBRepo) GetUserByID(id int) (models.User, error) {
+	var u models.User
+
+	return u, nil
+}
+
+func (m *testDBRepo) UpdateUser(u models.User) error {
+	return nil
+}
+
+func (m *testDBRepo) Authenticate(email, testPassword string) (int, string, error) {
+	if email == "me@here.ca" {
+		return 1, "", nil
+	}
+	return 0, "", errors.New("some error")
+}
