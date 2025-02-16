@@ -73,8 +73,8 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	res.Room = room
 	m.App.Session.Put(r.Context(), "reservation", res)
 
-	sd := res.StartDate.Format("2006 January 02")
-	ed := res.EndDate.Format("2006 January 02")
+	sd := res.StartDate.Format("2006-01-02")
+	ed := res.EndDate.Format("2006-01-02")
 	stringMap := make(map[string]string)
 	stringMap["start_date"] = sd
 	stringMap["end_date"] = ed
@@ -118,12 +118,18 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	form.MinLength("last_name", 3)
 	form.IsEmail("email")
 
+	sd := reservation.StartDate.Format("2006 January 02")
+	ed := reservation.EndDate.Format("2006 January 02")
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = sd
+	stringMap["end_date"] = ed
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
 		render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
-			Form: form,
-			Data: data,
+			Form:      form,
+			Data:      data,
+			StringMap: stringMap,
 		})
 		return
 	}
@@ -219,11 +225,15 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-
 	if len(rooms) == 0 {
 		// no availability
 		m.App.Session.Put(r.Context(), "error", "No availability")
-		http.Redirect(w, r, "/search-availability", http.StatusSeeOther)
+		stringMap := make(map[string]string)
+		stringMap["startDate"] = startDate.Format("2006-01-02")
+		stringMap["endDate"] = endDate.Format("2006-01-02")
+		render.Template(w, r, "search-availability.page.tmpl", &models.TemplateData{
+			StringMap: stringMap,
+		})
 		return
 	}
 	data := make(map[string]interface{})
