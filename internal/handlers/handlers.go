@@ -225,6 +225,16 @@ func (m *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+	if !endDate.After(startDate) {
+		m.App.Session.Put(r.Context(), "error", "You have to book at least one night")
+		stringMap := make(map[string]string)
+		stringMap["startDate"] = startDate.Format("2006-01-02")
+		stringMap["endDate"] = endDate.Format("2006-01-02")
+		render.Template(w, r, "search-availability.page.tmpl", &models.TemplateData{
+			StringMap: stringMap,
+		})
+		return
+	}
 	if len(rooms) == 0 {
 		// no availability
 		m.App.Session.Put(r.Context(), "error", "No availability")
@@ -295,6 +305,16 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 		resp := jsonResponse{
 			OK:      false,
 			Message: "Invalid end date format. Please use yyyy-mm-dd.",
+		}
+		out, _ := json.MarshalIndent(resp, "", "     ")
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(out)
+		return
+	}
+	if !endDate.After(startDate) {
+		resp := jsonResponse{
+			OK:      false,
+			Message: "End date must be at least one day after start date.",
 		}
 		out, _ := json.MarshalIndent(resp, "", "     ")
 		w.Header().Set("Content-Type", "application/json")
