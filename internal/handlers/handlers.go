@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -385,7 +386,7 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 	}
 	available, _ := m.DB.SearchAvailabilityByDatesByRoomID(startDate, endDate, roomID)
 	if !available {
-		m.App.Session.Put(r.Context(), "error", "attentione, user modified ilegally the dates after he fixed them")
+		m.App.Session.Put(r.Context(), "error", "attentione, user modified ilegally the dates after he fixed them :)))")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -408,4 +409,37 @@ func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "login.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
 	})
+}
+
+func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
+	_ = m.App.Session.RenewToken(r.Context()) // good practice to do a login or logout
+
+	err := r.ParseForm() // this populates the r.Form and r.PostForm
+	if err != nil {
+		log.Println(err)
+	}
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	form := forms.New(r.PostForm)
+	form.Required("email", "password")
+	form.IsEmail("email")
+	if !form.Valid() {
+		stringMap := make(map[string]string)
+		stringMap["email"] = email
+		render.Template(w, r, "login.page.tmpl", &models.TemplateData{
+			Form:      form,
+			StringMap: stringMap,
+		})
+		return
+	}
+	id, _, err := m.DB.Authenticate(email, password)
+	if err != nil {
+		log.Println(err)
+		m.App.Session.Put(r.Context(), "error", "Invalid login credentials")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+	}
+	m.App.Session.Put(r.Context(), "user_id", id)
+	m.App.Session.Put(r.Context(), "flash", "Logged in successfully!")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
