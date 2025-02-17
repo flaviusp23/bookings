@@ -7,6 +7,7 @@
 
 termen limita de facut pana pe 20 inclusiv pana sunt multumit
 
+csrf for post requests protection?
 password si alte datele stocate in Server Side Session
 soda migration sql ceva pompos
 unit , integrity testing with a test database repository
@@ -20,4 +21,4 @@ DONE sa repar testele cel putin de la handlers sa verifice toate testcase-urile 
 DONE o problema, pot insera rezervari la infinit cand durata e de o singura zi, adica 23-23 februarie si nu are sens,trebuie sa pun minim o noapte
 
 sa adaug la rezervarile de pe admin page sa am si nr de nopti ca o scadere intre end si start + 1
-culoarea de pe calendar a rezervarilor sa fie rosie daca e NEPROCESSED sau verde daca fu procesata
+pe homepage, slide-ul de la inceput sa mearga automat
