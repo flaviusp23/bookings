@@ -19,6 +19,5 @@ DONE tot aici,cand ma duc pe summary nu am startdate si enddate din session
 DONE si pe pagina search availability cand nu am nici o camera disponibila sa imi apara eroarea sus(deja e facuta) DAR sa imi ramana datele pe pagina cand se da refresh
 DONE sa repar testele cel putin de la handlers sa verifice toate testcase-urile deja scrise
 DONE o problema, pot insera rezervari la infinit cand durata e de o singura zi, adica 23-23 februarie si nu are sens,trebuie sa pun minim o noapte
-
-sa adaug la rezervarile de pe admin page sa am si nr de nopti ca o scadere intre end si start + 1
-pe homepage, slide-ul de la inceput sa mearga automat
+DONE sa adaug la rezervarile de pe admin page sa am si nr de nopti ca o scadere intre end si start + 1
+DONE pe homepage, slide-ul de la inceput sa mearga automat

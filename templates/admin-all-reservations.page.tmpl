@@ -2,6 +2,16 @@
 
 {{define "css"}}
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+    <style>
+        .status-pending {
+            color: red;
+            font-weight: bold;
+        }
+        .status-completed {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 {{end}}
 
 {{define "page-title"}}
@@ -20,6 +30,8 @@
                 <th>Room</th>
                 <th>Arrival</th>
                 <th>Departure</th>
+                <th>Nights</th>
+                <th>Processed</th>
             </tr>
             </thead>
             <tbody>
@@ -34,6 +46,14 @@
                     <td>{{.Room.RoomName}}</td>
                     <td>{{humanDate .StartDate}}</td>
                     <td>{{humanDate .EndDate}}</td>
+                    <td>{{nightsBetween .StartDate .EndDate}} nights</td>
+                    <td>
+                        {{if eq .Processed 0}}
+                            <span class="status-pending">Pending ⏳</span>
+                        {{else}}
+                            <span class="status-completed">Completed ✅</span>
+                        {{end}}
+                    </td>
                 </tr>
             {{end}}
             </tbody>

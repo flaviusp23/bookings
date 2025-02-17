@@ -18,7 +18,17 @@
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
         <link rel="stylesheet" type="text/css" href="/static/css/styles.css">
     </head>
-
+    <style>
+        /* Ensure the dropdown menu appears above other elements */
+        .navbar {
+            z-index: 1000; /* Higher than the carousel controls */
+            position: relative; /* Ensure z-index works */
+        }
+        /* Ensure notie alerts appear above all other elements */
+        .notie-container {
+            z-index: 1100 !important; /* Higher than navbar and carousel controls */
+        }
+    </style>
     <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -84,19 +94,19 @@
         <div class="row">
             <div class="col text-center">
                 <strong>Fort Smythe Bed &amp; Breakfast</strong><br>
-                100 Rocky Road<br>
-                Northbrook, Ontario<br>
-                Canada<br>
-                (416) 555-1212<br>
-                <a href="mailto:info@fsbb.ca">info@fsbb.ca</a>
+                Iuliu Maniu 105<br>
+                Sector 6, Bucuresti<br>
+                Romania<br>
+                (+40)787774397<br>
+                <a href="mailto:flavius.paltin@yahoo.com">flavius.paltin@yahoo.com</a>
             </div>
 
             <div class="col">
 
             </div>
 
-            <div class="col text-center">
-                <strong>Your home away<br>from home</strong>
+            <div class="col text-center mt-2">
+                <strong>Paltin Flavius<br></strong>
             </div>
         </div>
     </footer>

@@ -15,10 +15,11 @@ import (
 )
 
 var functions = template.FuncMap{
-	"humanDate":  HumanDate,
-	"formatDate": FormatDate,
-	"iterate":    Iterate,
-	"add":        Add,
+	"humanDate":     HumanDate,
+	"formatDate":    FormatDate,
+	"iterate":       Iterate,
+	"add":           Add,
+	"nightsBetween": NightsBetween,
 }
 
 var app *config.AppConfig
@@ -36,6 +37,11 @@ func Iterate(count int) []int {
 		items = append(items, i)
 	}
 	return items
+}
+
+// Calculate the number of nights (days between two dates)
+func NightsBetween(startDate, endDate time.Time) int {
+	return int(endDate.Sub(startDate).Hours() / 24) // Convert hours to days
 }
 
 // HumanDate returns time in YYYY-MM-DD format

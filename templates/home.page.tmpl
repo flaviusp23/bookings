@@ -1,12 +1,12 @@
 {{template "base" .}}
 
 {{define "content"}}
-    <div id="main-carousel" class="carousel slide" data-ride="carousel">
+    <div id="main-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
         <ol class="carousel-indicators">
-            <li data-target="#main-carousel" data-slide-to="0" class="active"></li>
-            <li data-target="#main-carousel" data-slide-to="1"></li>
-            <li data-target="#main-carousel" data-slide-to="2"></li>
+            <li data-bs-target="#main-carousel" data-bs-slide-to="0" class="active"></li>
+            <li data-bs-target="#main-carousel" data-bs-slide-to="1"></li>
+            <li data-bs-target="#main-carousel" data-bs-slide-to="2"></li>
         </ol>
 
         <div class="carousel-inner">
@@ -34,6 +34,43 @@
         </div>
     </div>
 
+    <button class="carousel-control-prev custom-carousel-control" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next custom-carousel-control" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+
+    <style>
+    .custom-carousel-control {
+        z-index: 500; /* Lower than the navbar */
+        border: none !important; 
+        background: none !important;
+        opacity: 0.6; 
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .custom-carousel-control:hover {
+        opacity: 1; 
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        filter: brightness(80%); 
+        background-color: rgba(0, 0, 0, 0.3); 
+        border-radius: 50%; 
+        padding: 10px; 
+    }
+
+    .carousel-control-prev-icon:hover,
+    .carousel-control-next-icon:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    </style>
+
+
     <div class="container">
         <div class="row">
             <div class="col">
@@ -58,6 +95,7 @@
 
             </div>
         </div>
+
 
     </div>
 {{end}}
